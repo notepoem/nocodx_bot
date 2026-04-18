@@ -1,0 +1,85 @@
+arise - বট স্টার্ট | Wake up the bot
+reveal - সব কমান্ড দেখুন | Reveal all commands
+gem - Gemini AI চ্যাট | Chat with Gemini
+gpt - GPT AI চ্যাট | Chat with GPT AI
+cld - Claude AI চ্যাট | Chat with Claude
+grok - Grok AI চ্যাট | Chat with Grok AI
+ds - Deepseek AI চ্যাট | Chat with Deepseek AI
+meta - Meta AI চ্যাট | Chat with Meta AI
+qn - Qwen AI চ্যাট | Chat with Qwen AI
+pplx - Perplexity AI সার্চ | Search with Perplexity AI
+
+yt - YouTube ভিডিও ডাউনলোড | Download YouTube videos
+yth - yt thumbnail/tags/description downloader
+dl - ভিডিও ডাউনলোড (YT/FB/Insta) | Download videos from YT/FB/Insta
+sp - Spotify গান ডাউনলোড | Download Spotify songs
+tbox - Terabox ডাউনলোড | Download Terabox
+story - সোশাল স্টোরি ডাউনলোড | Download social stories
+freepik - Freepik ডাউনলোড | Download from Freepik
+scribd - Scribd ডাউনলোড | Download Scribd docs
+pp - প্রোফাইল পিকচার ডাউনলোড | Download PFP
+websrc - website source code downloader
+
+imagine - AI ছবি তৈরি | Generate AI images
+bgremove - ব্যাকগ্রাউন্ড সরান | Remove Photo BG
+enh - ফেস এনহান্স | Enhance Photo Face
+faceswap - ফেস বদল | Swap faces in photos
+txt - Image/gif/video/pdf to Text also u can use /ocr
+summ - Image/gif/video summary
+generate - Image/gif/video to prompt
+prompt - image/gif/video annalyser & to prompt
+conv - ফাইল কনভার্টার | Convert Media files
+base64 - Base64 এনকোড | Base64 Encode
+px - proxy Checker
+share - share file fast and ez
+qr - কিউআর জেনারেট | Generate & Scan QR
+sticker - স্টিকার বানান/এড করুন | Create/Add Sticker
+newpack - নতুন প্যাক বানান (নাম সহ) | Create New Named Pack
+mypacks - আমার সব প্যাক লিস্ট | List My Sticker Packs
+delpack - প্যাক ডিলিট করুন | Delete Sticker Pack
+packrenm - প্যাক টাইটেল রিনেম | Rename Pack Title
+
+info - ইউজার/বট ইনফো | Get system stats
+tc - ট্রু-কলার চেক | Truecaller check
+wth - আবহাওয়া | Get weather info
+tr - টেক্সট অনুবাদ | Translate text
+say - টেক্সট টু ভয়েস | Text to voice
+site - ওয়েবসাইট স্ক্রিনশট | Get website info
+domain - ডোমেইন ইনফো (WHOIS/DNS) | Domain WHOIS & DNS Info
+dmn - ডোমেইন ইনফো (সংক্ষিপ্ত) | Short command for /domain
+2fa - 2FA অথেন্টিকেটর | 2FA Authenticator
+session - telegram session string generator
+tgauth - telegram API id/hash generator
+tmail - temp mail serviece 
+cgmail - check gmail
+qr - কিউআর কোড জেনারেট | Generate QR code
+bomb - SMS বোম্ব | Send SMS spam
+spmtxt - স্প্যাম ফাইল | Create spam file
+github - GitHub সার্চ | Search GitHub repos
+movie - মুভি সার্চ | Search movies
+upload - ফাইল আপলোড | Upload files to cloud
+exchange - কারেন্সি কনভার্ট | Convert currency
+b64encode - Base64 এনকোড | Base64 Encode
+b64decode - Base64 ডিকোড | Base64 Decode
+
+gen - কার্ড জেনারেট | Generate cards with BIN
+chk - কার্ড চেক | Check single card
+mas - কার্ড ম্যাস চেক | Mass check cards
+st - Stripe চেক | Check with Stripe
+mst - Stripe ম্যাস চেক | Mass Stripe check
+b3 - B3 গেটওয়ে চেক | Check card with B3
+mb3 - B3 ম্যাস চেক | Mass check with B3
+bin - BIN ইনফো | Get BIN information
+iban - IBAN জেনারেট | Generate IBAN
+ibncntry - IBAN দেশ লিস্ট | See country list
+fake - ফেক এড্রেস তৈরি | Generate fake address
+country - কান্ট্রি লিস্ট | See country list
+cpf - CPF ইনফো চেক | Get CPF information
+rut - রাউটিং চেক | Check routing info
+
+bc - ব্রডকাস্ট মেসেজ | Broadcast to all users
+stats - বট স্ট্যাটিস্টিক্স | Show bot statistics
+usersfile - get users list
+sub - সাবস্ক্রিপশন | Subscription
+fuck - ইউজার ব্যান | Ban user (Admin)
+cumin - ইউজার আনব্যান | Unban user (Admin)
