@@ -39,7 +39,7 @@ def register(bot, custom_command_handler, command_prefixes_list, check_usage_lim
             return
 
         try:
-            api_url = f"https://tg-info-api.vercel.app/api/get_user_info?username={identifier}"
+            api_url = f"web-production-29d53.up.railway.app/api/get_user_info?username={identifier}"
             response = await asyncio.to_thread(requests.get, api_url, timeout=15)
             
             if response.status_code != 200:
