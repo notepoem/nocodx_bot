@@ -75,7 +75,15 @@ async def download_file(url, filename, max_size_mb=50, proxies=None):
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36',
-            'Accept': '*/*',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'sec-ch-ua': '"Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'none',
+            'upgrade-insecure-requests': '1',
         }
         with await asyncio.to_thread(requests.get, url, stream=True, timeout=120, headers=headers, allow_redirects=True, proxies=proxies) as r:
             r.raise_for_status()
@@ -456,6 +464,8 @@ def register(bot: TeleBot, custom_command_handler, command_prefixes_list, check_
             title_final = title
             source_api = "insvid"
 
+            await bot.edit_message_text(f"⬇️ Downloading file... \n\n⚠️ If file is too large, a link will be provided.", chat_id=chat_id, message_id=wait_msg.message_id)
+
             for proxy in proxies_to_try:
                 try:
                     if choice == "video":
@@ -474,7 +484,6 @@ def register(bot: TeleBot, custom_command_handler, command_prefixes_list, check_
                     continue
 
                 try:
-                    await bot.edit_message_text(f"⬇️ Downloading file... \n\n⚠️ If file is too large, a link will be provided.", chat_id=chat_id, message_id=wait_msg.message_id)
                     download_success = await download_file(download_url, filename, max_size_mb=50, proxies=proxy)
                     if download_success:
                         title = title_final
