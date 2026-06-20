@@ -51,7 +51,7 @@ def extract_video_id(url):
 async def download_file(url, filename, max_size_mb=50):
     try:
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36',
             'Accept': '*/*',
         }
         with await asyncio.to_thread(requests.get, url, stream=True, timeout=120, headers=headers, allow_redirects=True) as r:
