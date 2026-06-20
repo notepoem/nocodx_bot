@@ -22,9 +22,9 @@ async def fetch_vbv_status(card_input):
         if res_data.get("status") != "success":
             return {"success": False, "error": res_data.get("message") or "API reported failure."}
 
-        details = res_data.get("details", {})
-        status = details.get("3ds_status", "").lower()
-        raw_result = res_data.get("result", "N/A")
+        details = res_data.get("details") or {}
+        status = (details.get("3ds_status") or "").lower()
+        raw_result = res_data.get("result") or "N/A"
         result_val = f"{raw_result} ({status})" if status else raw_result
 
         # Categorization
