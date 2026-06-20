@@ -21,6 +21,7 @@ from io import BytesIO
 from PIL import Image
 from cleanup import cache_manager
 import asyncio
+import random
 
 CACHE_BASE = os.path.join(os.getcwd(), "cache")
 THUMB_CACHE = os.path.join(CACHE_BASE, "yt_thumbnails")
@@ -48,13 +49,35 @@ def extract_video_id(url):
             return match.group(1)
     return None
 
-async def download_file(url, filename, max_size_mb=50):
+def load_proxies():
+    proxies_list = []
+    file_path = os.path.join(os.getcwd(), "proxies.txt")
+    if os.path.exists(file_path):
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = line.split(":")
+                    if len(parts) == 4:
+                        ip, port, user, password = parts
+                        proxy_str = f"http://{user}:{password}@{ip}:{port}"
+                        proxies_list.append({
+                            "http": proxy_str,
+                            "https": proxy_str
+                        })
+        except Exception as e:
+            print(f"[!] Error loading proxies: {e}")
+    return proxies_list
+
+async def download_file(url, filename, max_size_mb=50, proxies=None):
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36',
             'Accept': '*/*',
         }
-        with await asyncio.to_thread(requests.get, url, stream=True, timeout=120, headers=headers, allow_redirects=True) as r:
+        with await asyncio.to_thread(requests.get, url, stream=True, timeout=120, headers=headers, allow_redirects=True, proxies=proxies) as r:
             r.raise_for_status()
             
             content_length = r.headers.get('Content-Length')
@@ -123,7 +146,7 @@ def cleanup_thumbnails(chat_id):
     except Exception as e:
         print(f"[!] Cleanup failed: {e}")
 
-async def fetch_insvid_download_url(video_url: str, file_type: str) -> Optional[dict]:
+async def fetch_insvid_download_url(video_url: str, file_type: str, proxies=None) -> Optional[dict]:
     video_id = extract_video_id(video_url)
     if not video_id:
         return None
@@ -157,6 +180,7 @@ async def fetch_insvid_download_url(video_url: str, file_type: str) -> Optional[
             'https://ac.insvid.com/converter',
             headers=headers,
             json=json_data,
+            proxies=proxies,
             timeout=30
         )
         if response.status_code == 200:
@@ -416,61 +440,62 @@ def register(bot: TeleBot, custom_command_handler, command_prefixes_list, check_
             video_url = video["url"]
             title = re.sub(r'[\\/:*?"<>|]', '', video["title"])
 
-            download_url = None
-            success = False
-            source_api = "insvid"
-
-            if choice == "video":
-                # 1. Main API: ac.insvid.com
-                try:
-                    res_info = await fetch_insvid_download_url(video_url, "mp4")
-                    if res_info and res_info.get("url"):
-                        download_url = res_info["url"]
-                        if res_info.get("title"):
-                            title = re.sub(r'[\\/:*?"<>|]', '', res_info["title"])
-                        success = True
-                        source_api = "insvid"
-                except Exception as e:
-                    print(f"[VIDEO INSVID API ERROR] {e}")
-
-            elif choice == "audio":
-                # 1. Main API: ac.insvid.com
-                try:
-                    res_info = await fetch_insvid_download_url(video_url, "MP3")
-                    if res_info and res_info.get("url"):
-                        download_url = res_info["url"]
-                        if res_info.get("title"):
-                            title = re.sub(r'[\\/:*?"<>|]', '', res_info["title"])
-                        success = True
-                        source_api = "insvid"
-                except Exception as e:
-                    print(f"[AUDIO INSVID API ERROR] {e}")
-
-            if not success or not download_url:
-                await bot.edit_message_text("❌ Could not generate download link.", chat_id=chat_id, message_id=wait_msg.message_id)
-                return
-
             ext = "mp4" if choice == "video" else "mp3"
             filename = os.path.join(DOWNLOAD_CACHE, f"{title}.{ext}")
-            
-            await bot.edit_message_text(f"⬇️ Downloading file... \n\n⚠️ If file is too large, a link will be provided.", chat_id=chat_id, message_id=wait_msg.message_id)
-            
-            try:
-                download_success = await download_file(download_url, filename, max_size_mb=50)
-            except ValueError as e:
-                if str(e) == "FileTooLarge":
+            download_success = False
+
+            proxies_list = load_proxies()
+            if not proxies_list:
+                proxies_to_try = [None]
+            else:
+                proxies_to_try = list(proxies_list)
+                random.shuffle(proxies_to_try)
+                proxies_to_try.append(None) # fall back to direct connection if all proxies fail
+
+            download_url = None
+            title_final = title
+            source_api = "insvid"
+
+            for proxy in proxies_to_try:
+                try:
                     if choice == "video":
-                        msg_large = "⚠️ File is too large (>50MB). Providing direct download link..."
-                        await bot.edit_message_text(msg_large, chat_id=chat_id, message_id=wait_msg.message_id)
-                        
-                        final_url = download_url
-                        await bot.edit_message_text(f"⚠️ File is too large (>50MB).\n\n🔗 <b><a href='{final_url}'>Direct Download Link</a></b>", chat_id=chat_id, message_id=wait_msg.message_id, parse_mode="HTML")
+                        res_info = await fetch_insvid_download_url(video_url, "mp4", proxies=proxy)
                     else:
-                        await bot.edit_message_text(f"⚠️ File is too large (>50MB).\n\n🔗 <b><a href='{download_url}'>Direct Download Link</a></b>", chat_id=chat_id, message_id=wait_msg.message_id, parse_mode="HTML")
-                    return
-                else: 
-                    raise e
- 
+                        res_info = await fetch_insvid_download_url(video_url, "MP3", proxies=proxy)
+                        
+                    if res_info and res_info.get("url"):
+                        download_url = res_info["url"]
+                        if res_info.get("title"):
+                            title_final = re.sub(r'[\\/:*?"<>|]', '', res_info["title"])
+                    else:
+                        continue
+                except Exception as e:
+                    print(f"[CONVERTER PROXY ERROR] Using proxy {proxy}: {e}")
+                    continue
+
+                try:
+                    await bot.edit_message_text(f"⬇️ Downloading file... \n\n⚠️ If file is too large, a link will be provided.", chat_id=chat_id, message_id=wait_msg.message_id)
+                    download_success = await download_file(download_url, filename, max_size_mb=50, proxies=proxy)
+                    if download_success:
+                        title = title_final
+                        break
+                except ValueError as e:
+                    if str(e) == "FileTooLarge":
+                        if choice == "video":
+                            msg_large = "⚠️ File is too large (>50MB). Providing direct download link..."
+                            await bot.edit_message_text(msg_large, chat_id=chat_id, message_id=wait_msg.message_id)
+                            
+                            final_url = download_url
+                            await bot.edit_message_text(f"⚠️ File is too large (>50MB).\n\n🔗 <b><a href='{final_url}'>Direct Download Link</a></b>", chat_id=chat_id, message_id=wait_msg.message_id, parse_mode="HTML")
+                        else:
+                            await bot.edit_message_text(f"⚠️ File is too large (>50MB).\n\n🔗 <b><a href='{download_url}'>Direct Download Link</a></b>", chat_id=chat_id, message_id=wait_msg.message_id, parse_mode="HTML")
+                        return
+                    else: 
+                        raise e
+                except Exception as e:
+                    print(f"[DOWNLOAD PROXY ERROR] Using proxy {proxy}: {e}")
+                    continue
+
             if download_success:
                 await bot.edit_message_text("📤 Uploading file...", chat_id=chat_id, message_id=wait_msg.message_id)
                 try:
@@ -493,10 +518,11 @@ def register(bot: TeleBot, custom_command_handler, command_prefixes_list, check_
                     await bot.delete_message(chat_id, wait_msg.message_id)
                 except Exception as e:
                     print(f"[UPLOAD ERROR] {e}")
-                    await bot.edit_message_text(f"❌ Could not upload file to Telegram.\n\n🔗 <b><a href='{download_url}'>Direct Download Link</a></b>", chat_id=chat_id, message_id=wait_msg.message_id, parse_mode="HTML")
+                    dl_link = download_url if download_url else video_url
+                    await bot.edit_message_text(f"❌ Could not upload file to Telegram.\n\n🔗 <b><a href='{dl_link}'>Direct Download Link</a></b>", chat_id=chat_id, message_id=wait_msg.message_id, parse_mode="HTML")
             else:
-                await bot.edit_message_text(f"⚠️ Could not be downloaded.\n\n🔗 <b><a href='{download_url}'>Direct Download Link</a></b>", chat_id=chat_id, message_id=wait_msg.message_id, parse_mode="HTML")
-
+                dl_link = download_url if download_url else video_url
+                await bot.edit_message_text(f"⚠️ Could not be downloaded.\n\n🔗 <b><a href='{dl_link}'>Direct Download Link</a></b>", chat_id=chat_id, message_id=wait_msg.message_id, parse_mode="HTML")
         except Exception as e:
             print(f"[PROCESS ERROR] {e}")
             if wait_msg:
