@@ -160,8 +160,7 @@ async def fetch_insvid_download_url(video_url: str, file_type: str) -> Optional[
             timeout=30
         )
         if response.status_code == 200:
-            res_data = response.json()
-            title = res_data.get("title", "YouTube Video")
+            title = res_data.get("title") or "YouTube Video"
             if file_type == 'MP3':
                 if res_data.get("status") == "ok" and res_data.get("link"):
                     return {"url": res_data.get("link"), "title": title}
@@ -513,6 +512,9 @@ def register(bot: TeleBot, custom_command_handler, command_prefixes_list, check_
             idx = int(parts[1])
             choice = parts[2]
             chat_id = call.message.chat.id
+            if chat_id not in user_search_results:
+                await bot.answer_callback_query(call.id, "Session expired. Please search again.")
+                return
 
             await bot.answer_callback_query(call.id, "Checking availability...")
             try:
