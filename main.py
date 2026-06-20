@@ -45,7 +45,7 @@ from handlers import (
 from config import BOT_TOKEN
 bot = AsyncTeleBot(BOT_TOKEN, parse_mode="HTML")
 
-# ── URL sanitizer: strip API URLs from all outgoing bot messages ──────────────
+# ── URL sanitizer: strip API URLs from all outgoing bot messages 
 _URL_RE = re.compile(r'https?://(?!t\.me/|files\.catbox\.moe/|litter\.catbox\.moe/|0x0\.st/|[^\s<>"/]*123tokyo\.xyz|[^\s<>"/]*googlevideo\.com|[^\s<>"/]*insvid\.com|[^\s<>"/]*bbinl\.eu\.cc)[^\s<>"]+|www\.[^\s<>"]+', re.IGNORECASE)
 
 def _sanitize(text):
