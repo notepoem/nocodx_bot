@@ -166,9 +166,13 @@ class UrlDownloader:
                 if href:
                     urls.add(urljoin(base_url, href.strip()))
         for tag in self.soup.find_all(['audio', 'video', 'embed'], src=True):
-            urls.add(urljoin(base_url, tag.get('src').strip()))
+            src_val = tag.get('src')
+            if src_val and isinstance(src_val, str):
+                urls.add(urljoin(base_url, src_val.strip()))
         for obj in self.soup.find_all('object', data=True):
-            urls.add(urljoin(base_url, obj.get('data').strip()))
+            data_val = obj.get('data')
+            if data_val and isinstance(data_val, str):
+                urls.add(urljoin(base_url, data_val.strip()))
         return urls
 
     def _extract_meta_resources(self, base_url):
