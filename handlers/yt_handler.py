@@ -160,6 +160,7 @@ async def fetch_insvid_download_url(video_url: str, file_type: str) -> Optional[
             timeout=30
         )
         if response.status_code == 200:
+            res_data = response.json()
             title = res_data.get("title") or "YouTube Video"
             if file_type == 'MP3':
                 if res_data.get("status") == "ok" and res_data.get("link"):
