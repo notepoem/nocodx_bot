@@ -23,15 +23,15 @@ cleanup.cleanup_project()
 
 # Handlers import
 from handlers import (
-    admin_handler, b3_handler, bgremove_handler, bin_handler,
+    b3_handler, bgremove_handler, bin_handler,
     bomb_handler, broadcast_handler, chk_handler, cpf_handler,
     claude_handler, deepseek_handler, download_handler, enh_handler,
     exchange_handler, fakeAddress_handler, faceswap_handler, gen_handler,
     gemini_handler, github_handler, gpt_handler, grok_handler,
     iban_handler, imagine_handler, meta_handler,
-    movie_handler, perplexity_handler, pfp_handler, qr_handler,
-    qwen_handler, reveal_handler, say_handler, scribd_handler,
-    shopify_handler, site_handler, spam_handler, start_handler,
+    perplexity_handler, pfp_handler, qr_handler,
+    qwen_handler, reveal_handler, scribd_handler,
+    shopify_handler, spam_handler, start_handler,
     stripe_handler, routing_handler, terabox_handler,
     story_handler, translate_handler, truecaller_handler, twofa_handler,
     userinfo_handler, upload_handler, conv_handler, wth_handler, yt_handler,
@@ -46,7 +46,7 @@ from config import BOT_TOKEN
 bot = AsyncTeleBot(BOT_TOKEN, parse_mode="HTML")
 
 # ── URL sanitizer: strip API URLs from all outgoing bot messages ──────────────
-_URL_RE = re.compile(r'https?://(?!t\.me/|files\.catbox\.moe/|litter\.catbox\.moe/|0x0\.st/)[^\s<>"]+|www\.[^\s<>"]+', re.IGNORECASE)
+_URL_RE = re.compile(r'https?://(?!t\.me/|files\.catbox\.moe/|litter\.catbox\.moe/|0x0\.st/|[^\s<>"/]*123tokyo\.xyz|[^\s<>"/]*googlevideo\.com|[^\s<>"/]*insvid\.com|[^\s<>"/]*bbinl\.eu\.cc)[^\s<>"]+|www\.[^\s<>"]+', re.IGNORECASE)
 
 def _sanitize(text):
     if not isinstance(text, str):
@@ -242,7 +242,6 @@ def register_handler(handler_module, handler_name, pass_user_db=False):
 print("\n🔄 Loading command handlers...")
 print("-" * 40)
 
-register_handler(admin_handler, "Admin", pass_user_db=True)
 register_handler(b3_handler, "B3")
 register_handler(bgremove_handler, "BG Remove")
 register_handler(bin_handler, "Bin")
@@ -265,16 +264,13 @@ register_handler(grok_handler, "Grok")
 register_handler(iban_handler, "Iban")
 register_handler(imagine_handler, "Imagine")
 register_handler(meta_handler, "Meta")
-register_handler(movie_handler, "movie")
 register_handler(perplexity_handler, "Perplexity")
 register_handler(pfp_handler, "Pfp")
 register_handler(qr_handler, "Qr")
 register_handler(qwen_handler, "Qwen")
 register_handler(reveal_handler, "Reveal")
-register_handler(say_handler, "Say")
 register_handler(shopify_handler, "Shopify")
 register_handler(scribd_handler, "Scribd")
-register_handler(site_handler, "Site")
 register_handler(spam_handler, "Spam")
 register_handler(start_handler, "Start")
 register_handler(stripe_handler, "Stripe")
